@@ -4,23 +4,11 @@ class Renderer:
 
     x = 20
     y = 15
-    grid = [[1 for x in range(20)] for y in range(15)]
+    grid = [["." for x in range(20)] for y in range(15)]
     score = 0
     alive = True
     objects = []
     # 0=bush ; 1=bird ; (type, position)
-
-    def __init__(self):
-        return
-
-    def jump(self):
-        return
-
-    def animate(self):
-        for i in range(len(self.objects)):
-            self.objects[i][1] = self.objects[i][1] + 1
-            self.drawObstacles(self.objects[i])
-        return
 
     def start(self):
         while self.alive:
@@ -31,37 +19,55 @@ class Renderer:
             self.generateDino()
             self.show()
             self.checkLiving()
+            self.deleteObstacle()
             self.score += 1
-            time.sleep(0.2)
+            #time.sleep(0.2)
             print("score:", self.score)
 
+    def jump(self):
+        return
+
+    def animate(self):
+        for i in range(len(self.objects)):
+            if False:
+                blank = [".", ".", "."]
+                self.drawObstacles(blank, i - 1)
+            if self.objects[i][0] == 0:
+                bush = self.generateBush()
+                self.drawObstacles(bush, i)
+            elif self.objects[i][0] == 1:
+                bird = self.generateBird()
+                self.drawObstacles(bird, i)
+            self.objects[i][1] = self.objects[i][1] + 1
+
+    def drawObstacles(self, sprite, index):
+        yPosition = self.objects[index][1]
+        for i in range(3):
+            self.grid[i+9][yPosition] = sprite[i]
+
+
+
     def deleteObstacle(self):
-        for i in self.objects:
-            if self.objects[i][1] == 0:
-                self.objects.pop(self, i)
+        for i in range(len(self.objects)-1):
+            if self.objects[i][1] == 19:
+                self.objects.pop(i)
 
     def nextObstacle(self):
-        if self.score % 10 == 0:
+        if self.score % 5 != 0:
+            return
+        elif self.score % 10 == 0:
             self.generateBush()
-            self.objects.insert(len(self.objects) ,[0, 0])
-        elif self.score % 20 == 0:
-            self.objects.insert((1, 0))
+            self.objects.insert(len(self.objects), [0, 0])
+        elif self.score % 5 == 0:
+            self.generateBird()
+            self.objects.insert(len(self.objects), [1, 0])
 
     def show(self):
         for m in range(15):
             s = ""
-            #print("\n")
             for n in range(20):
                 s += str(self.grid[m][n]) + "\t"
-            print(s),
-
-    def drawObstacles(self, sprite):
-        for m in range(len(self.objects)):
-            startpointX = 0 + self.objects[m][1]
-            startpointY = 9
-            for i in range(4):
-                for j in range(3):
-                    self.grid[startpointY+i][startpointX+j] = sprite[i][j]
+            print(s)
 
     def spawnDino(self, sprite):
         startpointX = 17
@@ -75,36 +81,28 @@ class Renderer:
             self.alive = False
 
     def generateDino(self):
-        dino     = [["X", "X",  1 ],
-                    [ 1 , "X",  1 ],
-                    [ 1 , "X", "X"],
-                    [ 1 , "X",  1 ]]
+        dino     = [["X", "X",  "." ],
+                    [ "." , "X",  "." ],
+                    [ "." , "X", "X"],
+                    [ "." , "X",  "." ]]
         #print(dino)
         self.spawnDino(dino)
 
     def generateDuckedDino(self):
-        duckedDino =   [[  1 ,  1 ,  1 ],
-                        [  1 ,  1 ,  1 ],
-                        [ "X", "X", "X"],
-                        [  1 , "X",  1 ]]
+        duckedDino =   [[  "." ,  "." , "." ],
+                        [  "." ,  "." , "." ],
+                        [ "X"  ,  "X" , "X" ],
+                        [  "." ,  "X" ,  "."]]
         #print(duckedDino)
         self.spawnDino(duckedDino)
 
     def generateBush(self):
-        bush = [[ 1, 1],
-                ["X",1],
-                ["X",1]]
-        #print(bush)
-        #self.drawObstacle(bush)
+        return [".", "X", "X"]
 
     def generateBird(self):
-        bush = [["X", "X"],
-                [ 1 , 1  ],
-                [ 1 , 1  ]]
-        #print(bush)
-        #self.drawObstacle(bush) return bush
+        return ["X",".","."]
 
     def generateField(self):
         for m in range(self.x):
-            self.grid[14][m] = "-"
-            self.grid[13][m] = "-"
+            self.grid[14][m] = "H"
+            self.grid[13][m] = "H"
