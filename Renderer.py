@@ -29,23 +29,28 @@ class Renderer:
 
     def animate(self):
         for i in range(len(self.objects)):
-            if False:
-                blank = [".", ".", "."]
+            if i > 1:
+                blank = [",", ",", ","]
                 self.drawObstacles(blank, i - 1)
-            if self.objects[i][0] == 0:
+            elif self.objects[i][0] == 0: # falls busch
                 bush = self.generateBush()
-                self.drawObstacles(bush, i)
-            elif self.objects[i][0] == 1:
+                position = self.objects[i][1]
+                print("p ", position)
+                self.drawObstacles(bush, position)
+                self.objects[i][1] = self.objects[i][1] + 1
+
+            elif self.objects[i][0] == 1: #falls bird
                 bird = self.generateBird()
-                self.drawObstacles(bird, i)
-            self.objects[i][1] = self.objects[i][1] + 1
+                position = self.objects[i][1]
+                self.drawObstacles(bird, position)
+                self.objects[i][1] = self.objects[i][1] + 1
 
     def drawObstacles(self, sprite, index):
-        yPosition = self.objects[index][1]
+        print("xP", self.objects[index][0])
+        print("d ", self.objects)
+        xPosition = self.objects[index][0]
         for i in range(3):
-            self.grid[i+9][yPosition] = sprite[i]
-
-
+            self.grid[i][xPosition] = sprite[i]
 
     def deleteObstacle(self):
         for i in range(len(self.objects)-1):
@@ -56,11 +61,11 @@ class Renderer:
         if self.score % 5 != 0:
             return
         elif self.score % 10 == 0:
-            self.generateBush()
-            self.objects.insert(len(self.objects), [0, 0])
+            self.objects.append([0,0])
+            return
         elif self.score % 5 == 0:
-            self.generateBird()
-            self.objects.insert(len(self.objects), [1, 0])
+            self.objects.append([1,0])
+            return
 
     def show(self):
         for m in range(15):
@@ -77,7 +82,7 @@ class Renderer:
                 self.grid[startpointY + i][startpointX + j] = sprite[i][j]
 
     def checkLiving(self):
-        if self.score == 20:
+        if self.score == 40:
             self.alive = False
 
     def generateDino(self):
