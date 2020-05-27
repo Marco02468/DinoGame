@@ -17,54 +17,49 @@ class Renderer:
             self.animate()
             #getInput
             self.generateDino()
-            self.show()
+            #self.show()
             self.checkLiving()
             self.deleteObstacle()
             self.score += 1
             #time.sleep(0.2)
-            print("score:", self.score)
+            print("score: ", self.score)
 
     def jump(self):
         return
 
     def animate(self):
-        for i in range(len(self.objects)):
-            if i > 1:
-                blank = [",", ",", ","]
-                self.drawObstacles(blank, i - 1)
-            elif self.objects[i][0] == 0: # falls busch
+        print(self.objects)
+        for i in range(len(self.objects)-1):
+            if self.objects[i][0] == 0: # falls busch and fresh
+                #if self.objects[i][1] == 0:
                 bush = self.generateBush()
                 position = self.objects[i][1]
-                print("p ", position)
                 self.drawObstacles(bush, position)
-                self.objects[i][1] = self.objects[i][1] + 1
+                #elif self.objects[i][1] > 0:
 
             elif self.objects[i][0] == 1: #falls bird
                 bird = self.generateBird()
                 position = self.objects[i][1]
                 self.drawObstacles(bird, position)
-                self.objects[i][1] = self.objects[i][1] + 1
+            self.objects[i][1] = self.objects[i][1] + 1
 
-    def drawObstacles(self, sprite, index):
-        print("xP", self.objects[index][0])
-        print("d ", self.objects)
-        xPosition = self.objects[index][0]
+    def drawObstacles(self, sprite, xPosition):
         for i in range(3):
             self.grid[i][xPosition] = sprite[i]
 
     def deleteObstacle(self):
         for i in range(len(self.objects)-1):
-            if self.objects[i][1] == 19:
+            if self.objects[i][1] == 20:
                 self.objects.pop(i)
 
     def nextObstacle(self):
-        if self.score % 5 != 0:
-            return
-        elif self.score % 10 == 0:
+        if self.score % 10 == 0:
             self.objects.append([0,0])
+            print("spawn bush ", self.score)
             return
         elif self.score % 5 == 0:
             self.objects.append([1,0])
+            print("spawn bush ", self.score)
             return
 
     def show(self):
