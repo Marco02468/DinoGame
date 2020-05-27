@@ -22,20 +22,20 @@ class Renderer:
             self.deleteObstacle()
             self.score += 1
             #time.sleep(0.2)
-            print("score: ", self.score)
+            print("score: ", self.score,"    ---------------------------------------------------------------------------------")
 
     def jump(self):
         return
 
     def animate(self):
         print(self.objects)
-        for i in range(len(self.objects)-1):
+
+        for i in range(len(self.objects)):
+            print("objects: ", i)
             if self.objects[i][0] == 0: # falls busch and fresh
-                #if self.objects[i][1] == 0:
                 bush = self.generateBush()
                 position = self.objects[i][1]
                 self.drawObstacles(bush, position)
-                #elif self.objects[i][1] > 0:
 
             elif self.objects[i][0] == 1: #falls bird
                 bird = self.generateBird()
@@ -55,11 +55,11 @@ class Renderer:
     def nextObstacle(self):
         if self.score % 10 == 0:
             self.objects.append([0,0])
-            print("spawn bush ", self.score)
+            #print("spawn bush ", self.score)
             return
         elif self.score % 5 == 0:
             self.objects.append([1,0])
-            print("spawn bush ", self.score)
+            #print("spawn bush ", self.score)
             return
 
     def show(self):
