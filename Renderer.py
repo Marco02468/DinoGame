@@ -6,13 +6,15 @@ class Renderer:
     x = 20
     y = 15
     grid = [["." for x in range(20)] for y in range(15)]
+    # grid[yPos][xPos]
     score = 0
     alive = True
     objects = []
     # 0=bush ; 1=bird ; (type, position)
 
-    jumpPhase = 0 # ducked 0; default 1; low 2=9 ; medium 3=8 ; high 4=7 ; max 5=6
-    jumps = { 0:0, 1:2, 2:3, 3:4, 4:5, 5:6, 6:7, 7:8, 8:9, 9:0}
+    jumpPhase = 0 # default 1; low 2=9 ; medium 3=8 ; high 4=7 ; max 5=6           ##### all minus 1
+    jumps = { 0:1, 1:2, 2:3, 3:4, 4:5, 5:6, 6:7, 7:0}
+    jumpPos = { 0:0, 1:1, 7:1, 2:2, 6:2, 3:3, 5:3, 4:4 }
 
     def start(self):
         while self.alive:
@@ -28,6 +30,18 @@ class Renderer:
             #time.sleep(0.2)
             print("score: ", self.score)
 
+    def drawDino(self, sprite):
+        startpointX = 17
+        startpointY = 9 - self.jumpPos[self.jumpPhase]
+        for i in range(4):
+            for j in range(3):
+                self.grid[startpointY + i][startpointX + j] = sprite[i][j]
+
+    def jump(self):
+        self.jumpPhase = self.jumps[self.jumpPhase]
+        dino = self.generateDino()
+        self.drawDino(dino)
+
     def getInput(self):
         if self.mode == "presentation":
             input = self.ai()
@@ -37,43 +51,27 @@ class Renderer:
             # input = getInput() and resolve
 
     def ai(self):
-        if self.grid[11][16] == "." and self.grid[10][16] == ".":
-            print("RUN!")
-            return "run"
-        if self.grid[11][16] == "X": #jump
+        if self.grid[11][16] == "X" or self.jumpPhase > 0: #jump
             print("jump now!")
             return "jump"
-        if self.grid[10][16] == "X": #duck
+        elif self.grid[10][16] == "X": #duck
             return "duck"
-
-    def jump(self):
-        dino = self.generateDino()
-        self.drawDino(dino)
-
-    def drawDino(self, sprite):
-        startpointX = 17
-        startpointY = 9
-
-        if self.jumpPhase > -1:
-            startpointY -= self.jumpPhase
-        #elif self.jumpPhase == -1:
-        #    return
-        print("sp", sprite)
-        for i in range(3):
-            for j in range(2):
-                self.grid[startpointY + i][startpointX + j] = sprite[i][j]
+        elif self.grid[11][16] == "." and self.grid[10][16] == "." and self.jumpPhase == 0:
+            print("RUN!")
+            return "run"
 
     def move(self, input):
+        print("jumpphase", self.jumpPhase)
         if input == "jump":
-            self.jumpPhase = -1
             print("You jump")
             self.jump()
         elif input == "duck":
             print("You duck")
             self.duck()
-        elif input == "run":
+        elif input == "run" and self.jumpPhase == 0:
             print("You run")
-            self.generateDino()
+            dino = self.generateDino()
+            self.drawDino(dino)
 
     def animate(self):
         for i in range(len(self.objects)):
@@ -115,7 +113,7 @@ class Renderer:
             print(s)
 
     def checkLiving(self):
-        if self.score == 40:
+        if self.score == 50:
             self.alive = False
 
     def duck(self):
