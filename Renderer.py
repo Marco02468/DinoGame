@@ -11,16 +11,16 @@ class Renderer:
     objects = []
     # 0=bush ; 1=bird ; (type, position)
 
-    jumpPhase = 0 # default 0; low 1=8 ; medium 2=7 ; high 3=6 ; max 4=5 ; ducked -1
-    jumps = {0:1, 1:2, 3:4, 5:6, 6:7, 7:8, 8:0}
+    jumpPhase = 0 # ducked 0; default 1; low 2=9 ; medium 3=8 ; high 4=7 ; max 5=6
+    jumps = { 0:0, 1:2, 2:3, 3:4, 4:5, 5:6, 6:7, 7:8, 8:9, 9:0}
 
     def start(self):
         while self.alive:
-            self.generateField()
+            self.drawField()
             self.nextObstacle()
             self.animate()
-            self.getInput()
-            self.generateDino()
+            controlls = self.getInput()
+            self.move(controlls)
             self.show()
             self.checkLiving()
             self.deleteObstacle()
@@ -31,12 +31,17 @@ class Renderer:
     def getInput(self):
         if self.mode == "presentation":
             input = self.ai()
+            return input
         elif self.mode == "play":
             print("TODO")
-
+            # input = getInput() and resolve
 
     def ai(self):
+        if self.grid[11][16] == "." and self.grid[10][16] == ".":
+            print("RUN!")
+            return "run"
         if self.grid[11][16] == "X": #jump
+            print("jump now!")
             return "jump"
         if self.grid[10][16] == "X": #duck
             return "duck"
@@ -48,37 +53,44 @@ class Renderer:
     def drawDino(self, sprite):
         startpointX = 17
         startpointY = 9
-        if self.jumpPhase > -1:
-            startpointY += self.jumpPhase
-            print("jump", self.jumpPhase)
-            self.jumpPhase = self.jumps[self.jumpPhase] * -1
 
-        for i in range(4):
-            for j in range(3):
+        if self.jumpPhase > -1:
+            startpointY -= self.jumpPhase
+        #elif self.jumpPhase == -1:
+        #    return
+        print("sp", sprite)
+        for i in range(3):
+            for j in range(2):
                 self.grid[startpointY + i][startpointX + j] = sprite[i][j]
 
     def move(self, input):
-        if input == "jump" or self.jumpPhase > 0:
+        if input == "jump":
+            self.jumpPhase = -1
+            print("You jump")
             self.jump()
         elif input == "duck":
+            print("You duck")
             self.duck()
+        elif input == "run":
+            print("You run")
+            self.generateDino()
 
     def animate(self):
         for i in range(len(self.objects)):
             if self.objects[i][0] == 0: # falls busch and fresh
-                bush = self.generateBush()
+                bush = self.getBush()
                 position = self.objects[i][1]
                 self.drawObstacles(bush, position)
 
             elif self.objects[i][0] == 1: #falls bird
-                bird = self.generateBird()
+                bird = self.getBird()
                 position = self.objects[i][1]
                 self.drawObstacles(bird, position)
             self.objects[i][1] = self.objects[i][1] + 1
 
     def drawObstacles(self, sprite, xPosition):
         for i in range(3):
-            self.grid[i][xPosition] = sprite[i]
+            self.grid[i+10][xPosition] = sprite[i]
 
     def deleteObstacle(self):
         for i in range(len(self.objects)-1):
@@ -102,8 +114,6 @@ class Renderer:
                 s += str(self.grid[m][n]) + "\t"
             print(s)
 
-
-
     def checkLiving(self):
         if self.score == 40:
             self.alive = False
@@ -111,13 +121,19 @@ class Renderer:
     def duck(self):
          print()
 
+    def getBush(self):
+        return [".", "X", "X"]
+
+    def getBird(self):
+        return ["X",".","."]
+
     def generateDino(self):
         dino     = [["X", "X",  "." ],
                     [ "." , "X",  "." ],
                     [ "." , "X", "X"],
                     [ "." , "X",  "." ]]
         #print(dino)
-        self.drawDino(dino)
+        return dino
 
     def generateDuckedDino(self):
         duckedDino =   [[  "." ,  "." , "." ],
@@ -125,32 +141,10 @@ class Renderer:
                         [ "X"  ,  "X" , "X" ],
                         [  "." ,  "X" ,  "."]]
         #print(duckedDino)
-        self.drawDino(duckedDino)
+        return duckedDino
 
-    def generateBush(self):
-        return [".", "X", "X"]
-
-    def generateBird(self):
-        return ["X",".","."]
-
-    def generateField(self):
+    def drawField(self):
         self.grid = [["." for x in range(20)] for y in range(15)]
         for m in range(self.x):
             self.grid[14][m] = "H"
             self.grid[13][m] = "H"
-
-    def generateDino(self):
-        dino     = [["X", "X",  "." ],
-                    [ "." , "X",  "." ],
-                    [ "." , "X", "X"],
-                    [ "." , "X",  "." ]]
-        #print(dino)
-        self.drawDino(dino)
-
-    def generateDuckedDino(self):
-        duckedDino =   [[  "." ,  "." , "." ],
-                        [  "." ,  "." , "." ],
-                        [ "X"  ,  "X" , "X" ],
-                        [  "." ,  "X" ,  "."]]
-        #print(duckedDino)
-        self.drawDino(duckedDino)
