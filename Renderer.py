@@ -13,8 +13,8 @@ class Renderer:
     # 0=bush ; 1=bird ; (type, position)
 
     jumpPhase = 0 # default 1; low 2=9 ; medium 3=8 ; high 4=7 ; max 5=6           ##### all minus 1
-    jumps = { 0:1, 1:2, 2:3, 3:4, 4:5, 5:6, 6:7, 7:0}
-    jumpPos = { 0:0, 1:1, 7:1, 2:2, 6:2, 3:3, 5:3, 4:4 }
+    jumps = { 0:1, 1:2, 2:3, 3:4, 4:5, 5:0}
+    jumpPos = { 0:0, 1:1, 2:2, 3:3, 4:2, 5:1 }
 
     def start(self):
         while self.alive:
@@ -27,7 +27,7 @@ class Renderer:
             self.checkLiving()
             self.deleteObstacle()
             self.score += 1
-            #time.sleep(0.2)
+            time.sleep(0.5)
             print("score: ", self.score)
 
     def drawDino(self, sprite):
@@ -113,7 +113,7 @@ class Renderer:
             print(s)
 
     def checkLiving(self):
-        if self.score == 50:
+        if self.score == 100:
             self.alive = False
 
     def duck(self):
