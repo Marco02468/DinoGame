@@ -3,6 +3,7 @@ from Grids import Grid
 import pygame
 import time, random
 
+
 class Ressource:
     r = TextRenderer(15, 20)
     g = Grid(r.width, r.height, r)
@@ -66,12 +67,11 @@ class Ressource:
                     self.g.render(self.startbild)
                     time.sleep(0.05)
 
-
     def getBush(self):
-        return [[12, 0, 5, 0], [11, 1, 5, 0], [10, 1, 5, 0]]
+        return [[12, 0, 5, 0], [11, 0, 5, 0], [10, 0, 5, 0]]
 
     def getBird(self):
-        return [[9, 0, 2, 0], [9, 0, 2, 0], [9, 0, 7, 0]]
+        return [[9, 0, 2, 0], [9, 0, 2, 0], [9, 0, 2, 0]]
 
     def generateDino(self):
         dino = [[[0, 1, 0, 0], [0, 1, 0, 0], [0, 0, 7, 0]],
@@ -87,3 +87,12 @@ class Ressource:
                       [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 0, 0]],
                       [[0, 0, 7, 0], [0, 1, 0, 0], [0, 0, 7, 0]]]
         return duckedDino
+
+    def getRock(self):
+        return [[12, 0, 3, 0], [11, 1, 3, 0], [12, 1, 3, 0]]
+
+    def getBee(self):
+        return [[9, 0, 1, 0], [9, 0, 1, 0], [9, 0, 7, 0]]
+
+    #def getRaft(self):
+     #   return [[12, 0, 2, 0], [12, 0, 2, 0], [12, 0, 2, 0],[12, 0, 2, 0]]
